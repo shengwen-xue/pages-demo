@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>客户信息</title>
+	<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+	<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+	<script>
+		function search() {
+			$("#list").html("")
+			var key = $("[name='key']").val();
+			if (key == null || key == "") {
+				alert("请输入客户名称");
+			}
+			jQuery.support.cors = true;// 前端跨域
+			$.get("http://10.134.51.56:8082/cloudwalk-wechat/wechat/test", { key: key }, function (data) {
+				if (data.length > 0) {
+					//var td = "<td>";
+					$.each(data, function (index, user) {
+						$("#list").append("<td><input type='checkbox' name='id' value='" + user.id + "'/></td>");
+						$("#list").append("<td name='userName'>" + user.userName + "</td>");
+						$("#list").append("<td name='salesName'>" + user.salesName + "</td>");
+						$("#list").append("<td name='dateStr'>" + user.dateStr + "</td>");
+					})
+				} else {
+					//alert("未找到匹配数据");
+					var str = "暂无数据";
+					$("#list").append("<td colspan='4'>" + str + "</td>");
+				}
+			}, "json");
+		}
+
+		function conf() { // 点击确认
+			var check = $("input:checkbox:checked")
+			check.each(function () {
+				var row = $(this).parent("td").parent("tr");
+				var id = $("[name='id']").val();
+				var userName = row.find("[name='userName']").html();
+				var salesName = row.find("[name='salesName']").html();
+				var dateStr = row.find("[name='dateStr']").html();
+				console.info(row)
+				alert(id + "-" + userName + "-" + salesName + "-" + dateStr);
+			});
+
+		}
+
+		function canc() {
+			alert("333");
+		}
+	</script>
+
+	<style>
+		table {
+			/* 合并单元格框线 */
+			border-collapse: collapse;
+		}
+
+		td {
+			border: solid 1px #ccc;
+			width: 100px;
+			height: 28px;
+			text-align: center;
+			vertical-align: middle;
+		}
+	</style>
+</head>
+
+<body>
+	<h2>客户信息</h2>
+	<hr>
+	客户名称&ensp;<input type="text" name="key" placeholder="请输入客户名称">&ensp;<input type="button" value="搜索"
+		onclick="search()" /><br /><br />
+	<table>
+		<tr>
+			<td>选项</td>
+			<td>客户名称</td>
+			<td>销售经理</td>
+			<td>创建时间</td>
+		</tr>
+		<tr id="list"></tr>
+	</table><br />
+	<input type="button" value="确认" onclick="conf()" />&ensp;<input type="button" value="取消" onclick="canc()" />
+</body>
+
+</html>
